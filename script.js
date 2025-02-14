@@ -23,16 +23,22 @@ gl.viewport(0, 0, canvas.width, canvas.height);
 // Vertex Shader Source
 const vertexShaderSource = `
   attribute vec2 a_position;
+  attribute vec3 a_color;
+  varying vec3 v_color;
+
   void main() {
     gl_Position = vec4(a_position, 0.0, 1.0);
+    v_color = a_color; // Pass color to fragment shader
   }
 `;
 
 // Fragment Shader Source
 const fragmentShaderSource = `
   precision mediump float;
+  varying vec3 v_color;
+
   void main() {
-    gl_FragColor = vec4(1.0, 0.5, 0.2, 1.0);
+    gl_FragColor = vec4(v_color, 1.0);
   }
 `;
 
@@ -44,17 +50,18 @@ gl.useProgram(program);
 
 // Define Triangle Vertices
 const vertices = [
-  0.0,  0.5,
- -0.5, -0.5,
-  0.5, -0.5
+  //  X,     Y,      R,    G,    B
+   0.0,   0.5,   1.0,  0.0,  0.0, // Red
+  -0.5,  -0.5,   0.0,  1.0,  0.0, // Green
+   0.5,  -0.5,   0.0,  0.0,  1.0  // Blue
 ];
 
-// Create buffer and set attributes
 const buffer = createBuffer(gl, vertices);
-setAttribute(gl, program, "a_position", 2, buffer);
+setAttribute(gl, program, "a_position", 2, buffer, 5, 0); // Position: 2 floats, stride 5, offset 0
+setAttribute(gl, program, "a_color", 3, buffer, 5, 2); // Color: 3 floats, stride 5, offset 2
 
 function render() {
-  const dt = getDeltaTime(165);
+  const dt = getDeltaTime(60);
   vanillaContext.clearRect(0, 0, vanillaCanvas.width, vanillaCanvas.height);
 
   clearCanvas(gl);

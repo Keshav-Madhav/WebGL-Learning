@@ -5,14 +5,14 @@ export function createBuffer(gl, data) {
   return buffer;
 }
 
-export function setAttribute(gl, program, attribute, size, buffer) {
-  const location = gl.getAttribLocation(program, attribute);
+export function setAttribute(gl, program, name, size, buffer, stride = 0, offset = 0) {
+  const location = gl.getAttribLocation(program, name);
   if (location === -1) {
-    console.error(`Attribute ${attribute} not found in shader.`);
+    console.error(`Attribute ${name} not found in shader.`);
     return;
   }
 
   gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-  gl.vertexAttribPointer(location, size, gl.FLOAT, false, 0, 0);
   gl.enableVertexAttribArray(location);
+  gl.vertexAttribPointer(location, size, gl.FLOAT, false, stride * 4, offset * 4);
 }
